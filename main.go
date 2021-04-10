@@ -21,7 +21,11 @@ func main() {
 		switch input[0] {
 		case "GET":
 			key := input[1]
-			value := s.Get(key)
+			value, err := s.Get(key)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 			fmt.Println(value)
 		case "PUT":
 			key, value := input[1], input[2]
