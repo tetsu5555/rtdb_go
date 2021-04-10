@@ -13,6 +13,9 @@ var ctx = context.Background()
 var redisChannel = "kv_broadcast2"
 var redisHost = "localhost"
 var redisPort = 6379
+var redisAddr = redisHost + ":" + strconv.Itoa(redisPort)
+var redisPassword = ""
+var redisDB = 0
 
 type Store struct {
 	db          map[string]string
@@ -22,9 +25,9 @@ type Store struct {
 func NewStore() *Store {
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     redisHost + ":" + strconv.Itoa(redisPort),
-		Password: "",
-		DB:       0,
+		Addr:     redisAddr,
+		Password: redisPassword,
+		DB:       redisDB,
 	})
 
 	store := &Store{
@@ -47,7 +50,8 @@ func (k Store) Get(key string) (string, error) {
 
 func (k Store) Put(key string, value string) {
 	k.db[key] = value
-	k.redisClient.Publish(ctx, redisChannel, key+":"+value)
+	msg := key + ":" + value
+	k.redisClient.Publish(ctx, redisChannel, msg)
 }
 
 func (k Store) update() {
@@ -56,8 +60,8 @@ func (k Store) update() {
 
 	for {
 		msg, _ := pubsub.ReceiveMessage(ctx)
-		payload := strings.Split(msg.Payload, ":")
-		key, value := payload[0], payload[1]
+		parsedMessages := strings.Split(msg.Payload, ":")
+		key, value := parsedMessages[0], parsedMessages[1]
 		k.db[key] = value
 	}
 }
