@@ -30,6 +30,7 @@ func NewKVStore(clientId *string) *KVStore {
 		Password: redisPassword,
 		DB:       redisDB,
 	})
+	// clientIdを指定しない場合は適当に指定される
 	var dbFile = "/tmp/rtdb/" + *clientId
 
 	db, err := bitcask.Open(dbFile)
