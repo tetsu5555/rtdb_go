@@ -11,13 +11,8 @@ import (
 
 func main() {
 	flag.Parse()
-	var clientId = flag.String("client_id", "client1", "Client ID for this client")
 
-	if *clientId == "" {
-		panic("clientId not specified")
-	}
-
-	s := *kv.NewKVStore(clientId)
+	s := *kv.NewKVStore()
 
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Real time db")
