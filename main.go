@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"kvshakyo/kv"
 	"os"
@@ -9,7 +10,14 @@ import (
 )
 
 func main() {
-	s := *kv.NewStore()
+	flag.Parse()
+	var clientId = flag.String("client_id", "client1", "Client ID for this client")
+
+	if *clientId == "" {
+		panic("clientId not specified")
+	}
+
+	s := *kv.NewKVStore(clientId)
 
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Real time db")
@@ -21,11 +29,7 @@ func main() {
 		switch input[0] {
 		case "GET":
 			key := input[1]
-			value, err := s.Get(key)
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
+			value := s.Get(key)
 			fmt.Println(value)
 		case "PUT":
 			key, value := input[1], input[2]
