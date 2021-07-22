@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/prologic/bitcask"
+	"git.mills.io/prologic/bitcask"
 )
 
 var ctx = context.Background()
